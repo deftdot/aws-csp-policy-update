@@ -1,0 +1,38 @@
+name: 'CloudFront CSP Update'
+branding:
+  icon: shield
+  color: purple
+description: 'Update the selected Custom Security headers policy with a new one'
+inputs:
+  response-header-policy-id:
+    description: 'The ID of the policy to update'
+    required: true
+    default: ''
+  new-policy-file:
+    description: 'The location of the new policy file'
+    required: true
+    default: ''
+outputs:
+  newpolicy:
+    description: "Policy Modified Message"
+    value: The Policy were updated successfully with the new policy from file ${{ inputs.new-policy-file }} 
+runs:
+  using: "composite"
+  steps:
+    - run: echo "Applying the new policy file ${{ inputs.new-policy-file }}"
+      shell: bash
+    - run: cat ${{ inputs.new-policy-file }}
+      shell: bash
+
+    - name: get current policy ETag
+      run: |
+        echo "CURRENT_ETAG=$(aws cloudfront get-response-headers-policy-config --id ${{ inputs.response-header-policy-id }} --query ETag --output text)" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Apply the new Policy
+      run: |
+         aws cloudfront update-response-headers-policy --id ${{ inputs.response-header-policy-id }} --if-match ${{ env.CURRENT_ETAG }} --response-headers-policy-config file://${{ inputs.new-policy-file }}
+      shell: bash  
+      
+    - run: echo "Finished applying new Policy - ${{ inputs.new-policy-file }}."
+      shell: bash
