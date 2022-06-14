@@ -4,7 +4,7 @@
 
 Github action that Update the selected Custom Security headers policy with A New Version Policy JSON.
 
-This allows a Self service approach to organization users to Update CloudFront CSP (Content-security-policy) in a more managed way.
+This allows a Self service approach for organization users to Update CloudFront CSP (Content-security-policy) in a more managed way.
 1. The New CSP is published in a JSON file.
 2. A PR is opened to the Cloud-Owner/Security-Owner.
 3. Once the PR is approved the Action updates the policy automaticly.
